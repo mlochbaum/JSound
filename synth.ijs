@@ -15,6 +15,8 @@ softclip =: 3&$: : (4 :'(% [:%:^:x [:>: ^&(2<.@^x))&.:(%&(>:max)) y')
 NB. Add two signals x and y or a list of (boxed) signals y
 NB. Extend to the length of the longest signal.
 add =: +&:>/@:({."1&.>~ [:>./{:@$@>)@:(] : ;)
+NB. Like add, but concatenate instead.
+concat =: ([: |: [: ; |:&.>) : (,"1)
 NB. Like (|.), but the end of the signal does not wrap around.
 shift =: }."1 ` ((0$~-@[),"1]) @. (0>[)
 NB. x is (location,length). Obtain that part of the signal.
