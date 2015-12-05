@@ -81,6 +81,11 @@ r =. 1{y,0.99
 )
 
 NB. ---------------------------------------------------------
+NB. all-pass filter
+NB. y is a complex number, which should have magnitude less than 1.
+allpass =: (;-@|.@}.)@:(1:,-@+:@(9&o.),*:@|) makefilter
+
+NB. ---------------------------------------------------------
 NB. high-pass filter with variable frequency
 highpass_f =: 4 : 0"1
 y =. (-~2.1) + y
