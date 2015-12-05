@@ -59,7 +59,7 @@ x =. 1 (3!:4) ,|: clip x
 AudioFormat =. 1
 ChunkSize =. 20 + (Subchunk1Size=.16) + Subchunk2Size =. #x
 BitsPerSample =. 16
-SampleRate =. 44100
+SampleRate =. F
 ByteRate =. SampleRate * NumChannels * BitsPerSample%8
 BlockAlign =. NumChannels * BitsPerSample%8
 
