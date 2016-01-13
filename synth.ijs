@@ -8,10 +8,6 @@ NB. ---------------------------------------------------------
 NB. General manipulation
 NB. Each verb works on multi-channel signals.
 
-NB. Clip signal y to the maximum possible range.
-clip =: max <. min >. ]
-NB. x is an integer giving "sharpness". Perform a soft clip.
-softclip =: 3&$: : (4 :'(% [:%:^:x [:>: ^&(2<.@^x))&.:(%&(>:max)) y')
 NB. Add two signals x and y or a list of (boxed) signals y
 NB. Extend to the length of the longest signal.
 add =: +&:>/@:({."1&.>~ [:>./{:@$@>)@:(] : ;)
@@ -23,6 +19,13 @@ NB. x is (location,length). Obtain that part of the signal.
 slice =: ((+(**i.))/@[ { ])"1
 NB. Repeat signal y x times.
 rep =: ((*#) $ ])"1
+
+NB. Clip signal y to the maximum possible range.
+clip =: max <. min >. ]
+NB. x is an integer giving "sharpness". Perform a soft clip.
+softclip =: 3&$: : (4 :'(% [:%:^:x [:>: ^&(2<.@^x))&.:(%&(>:max)) y')
+NB. Convert a real signal to integers without introducing artifacts.
+dither =: 0.5 <.@:+ (+ 0 -/@:(?@$)~ (2,$))
 
 NB. Utilities to play a signal (using Linux)
 play0=: [: empty [: 2!:1 'aplay 1.wav' [ writewav&'1.wav'
