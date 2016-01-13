@@ -31,12 +31,17 @@ assert. 'RIFFWAVEfmt data' -: ; 0 2 3 11{hdr
 assert. 1 3 e.~ AudioFormat  NB. Cannot handle compressed formats
 assert. 16 = Subchunk1Size
 NB. assert. 1=#~. (ChunkSize-Subchunk1Size+20) , #y  NB. Subchunk2Size
-assert. ByteRate = SampleRate * NumChannels * BitsPerSample%8
-assert. BlockAlign = NumChannels * BitsPerSample%8
+BytesPerSample =: BitsPerSample%8
+assert. ByteRate = SampleRate * NumChannels * BytesPerSample
+assert. BlockAlign = NumChannels * BytesPerSample
 
+NB. y =. Subchunk2Size {. y
 NB. |: (-NumChannels) ]\ (-BitsPerSample%8) toint\ y
 if. 1 = AudioFormat do.
-  y =. _1 (3!:4) , (-BitsPerSample%8) (_2&({.!.({.a.)))\ y NB. Subchunk2Size {. y
+  b =. BytesPerSample
+  assert. b <: 8
+  p =. 2 >.@^. b
+  y =. (-p) (3!:4) , (-BytesPerSample) ((-2^p)&({.!.({.a.)))\ y
 elseif. 3 = AudioFormat do.
   assert. 32 = BitsPerSample
   y =. _1 (3!:5) y
