@@ -90,7 +90,8 @@ NB. Check that fields match their definitions
 msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
 (*./ assert~ [: msg NAME#~-.) hdr = ".&.> DEF
 
-|: (-NumChannels) ]\ (AudioFormat,BitsPerSample) audioconvert y
+fmt =. AudioFormat,BitsPerSample
+SampleRate;fmt; |: (-NumChannels) ]\ fmt audioconvert y
 )
 
 NB. ---------------------------------------------------------
@@ -109,5 +110,5 @@ hdr =. ; LEN {.!.({.a.)&.> ('i'=TYP) toint^:_1&.>@]^:["0 ".&.> NAME
 
 NB. =========================================================
 cocurrent 'base'
-readwav  =: 3 : '3&{::^:((F;FMT) -: 2&{.) readwav_pwav_ y'
+readwav  =: 3 : '_1&{::^:((F;FMT) -: 2&{.) readwav_pwav_ y'
 writewav =: 4 : '((F;FMT;])^:(0=L.) x) writewav_pwav_ y'
