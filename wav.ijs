@@ -1,75 +1,113 @@
-NB. Functions to read and write from wave files.
+NB. Functions to read to and write from wave files.
+NB. Does not work on many kinds of wave files, such as compressed data.
 
-WAVE_HEADER =: ;:;._2 ] 0 : 0
-4 c ChunkID
-4 i ChunkSize
-4 c Format
-4 c Subchunk1ID
-4 i Subchunk1Size
-2 i AudioFormat
-2 i NumChannels
-4 i SampleRate
-4 i ByteRate
-2 i BlockAlign
-2 i BitsPerSample
-4 c Subchunk2ID
-4 i Subchunk2Size
+default =. ".@:(, '=:',":) ^: (0~:4!:0@<@[)
+'FMT' default 1 16
+'F'   default 44100
+
+NB. The output from readwav (input to writewav) is either:
+NB. - A list containing three boxes:
+NB.     The sample rate (in Hz)
+NB.     The audio format (see below)
+NB.     PCM data, which has shape (n,l) for n-channels with l samples.
+NB. - The last of these three, unboxed.
+NB.
+NB. For the latter case, the sample rate and audio format default to
+NB. the constant values F and FMT (in the base locale).
+NB. For a read, the second case is used whenever both of these values
+NB. match their corresponding constants.
+
+NB. The audio format consists of the type of audio and the bit depth.
+NB. The type is one of:
+NB.   1  unsigned integer
+NB.   3  floating point
+NB. Other audio formats may be supported in the future.
+
+cocurrent 'pwav'
+
+NB. ---------------------------------------------------------
+WAVE_HEADER =: ((;:@{. , >:@[<@}.])~ i.&'|');._2 ] 0 : 0
+4 c ChunkID        |'RIFF'
+4 i ChunkSize      |20 + Subchunk1Size + Subchunk2Size
+4 c Format         |'WAVE'
+4 c Subchunk1ID    |'fmt '
+4 i Subchunk1Size  |16
+2 i AudioFormat    |
+2 i NumChannels    |
+4 i SampleRate     |
+4 i ByteRate       |SampleRate * NumChannels * BitsPerSample%8
+2 i BlockAlign     |NumChannels * BitsPerSample%8
+2 i BitsPerSample  |
+4 c Subchunk2ID    |'data'
+4 i Subchunk2Size  |
 )
 
-NB. y is the path to a wave file.
-NB. readwav returns the PCM data (which is just a list of numbers)
-NB. from that file. The output has shape (n,l) for n-channel sound.
-readwav =: 3 : 0
-toint =. 256 #. a.i.|.
+'LEN TYP NAME DEF' =: <"_1|: WAVE_HEADER
+LEN =: ".@> LEN
+TYP =: ; TYP
 
-y =. 1!:1 boxopen y
-typ=.{.@>typ [ len=.".@>len [ 'len typ name' =. <"_1|: WAVE_HEADER
-(name) =. hdr =. ('i'=typ) toint&.>@]^:["0 (y{.~+/len) (</.~ I.) len
-y =. (+/len) }. y
+NB. Topological order for field definitions
+tsort =. (] , 1 i.~ ] (0"0@[)`[`]} (*./@:e.&> <))^:(>&#)^:_ & ($0)
+ORDER =: tsort (+./@:E.)&>~&NAME(I.@:)(<@)"0 DEF
+NB. Fill blank definitions with their own names.
+DEF =: =&a:`(,:&NAME)} DEF
 
-assert. 'RIFFWAVEfmt data' -: ; 0 2 3 11{hdr
-assert. 1 3 e.~ AudioFormat  NB. Cannot handle compressed formats
-assert. 16 = Subchunk1Size
-NB. assert. 1=#~. (ChunkSize-Subchunk1Size+20) , #y  NB. Subchunk2Size
-BytesPerSample =: BitsPerSample%8
-assert. ByteRate = SampleRate * NumChannels * BytesPerSample
-assert. BlockAlign = NumChannels * BytesPerSample
+NB. Get integer from little-endian unsigned byte representation.
+toint =: 256 #. a.i.|.
 
-NB. y =. Subchunk2Size {. y
-NB. |: (-NumChannels) ]\ (-BitsPerSample%8) toint\ y
+NB. ---------------------------------------------------------
+NB. u is (AudioFormat,BitsPerSample).
+NB. Return an invertible verb to convert bitstream to PCM data.
+audioconvert =: 1 : 0
+'AudioFormat BitsPerSample' =. u
 if. 1 = AudioFormat do.
-  b =. BytesPerSample
-  assert. b <: 8
-  p =. 2 >.@^. b
-  y =. (-p) (3!:4) , (-BytesPerSample) ((-2^p)&({.!.({.a.)))\ y
+  b =. BitsPerSample%8
+  'Bits per sample cannot exceed 64' assert b <: 8
+  m2p =. -2^ p =. 2 >.@^. b
+  (-p) (3!:4) (-b)&(m2p&({.!.({.a.))\)(,@:) :. (m2p&((-b)&{.\)(,@:))
 elseif. 3 = AudioFormat do.
-  assert. 32 = BitsPerSample
-  y =. _1 (3!:5) y
+  'Floating point only supports 32-bit' assert 32 = BitsPerSample
+  _1&(3!:5)
+elseif. do.
+  0 assert~ 'Unsupported audio format: ',":AudioFormat
 end.
-|: (-NumChannels) ]\ y
 )
 
+NB. =========================================================
+NB. readwav, writewav
+
+NB. ---------------------------------------------------------
+NB. y is the path to a wave file.
+NB. readwav returns the PCM data from that file.
+NB. The output has shape (n,l) for n-channel sound.
+readwav =: 3 : 0
+y =. 1!:1 boxopen y
+'hdr y' =. (+/LEN) ({. ; }.) y
+
+NB. Assign field values to field names.
+(NAME) =. hdr =. ('i'=TYP) toint&.>@]^:["0 hdr (</.~ I.) LEN
+NB. Check that fields match their definitions
+msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
+(*./ assert~ [: msg NAME#~-.) hdr = ".&.> DEF
+
+|: (-NumChannels) ]\ (AudioFormat,BitsPerSample) audioconvert y
+)
+
+NB. ---------------------------------------------------------
 NB. x is PCM data as output by readwav, and y is the file to write to.
-NB. Perform the write.
-NB. Note that writewav parallels the structure of readwav, but backwards.
-NB. This is more easily seen in some places (1!:1 versus 1!:2 ; the
-NB. calls to toint) than others.
 writewav =: 4 : 0
-fromint =. (256 #. a.i.|.)^:_1
-
+'SampleRate fmt x' =. x
 NumChannels =. #x
-x =. 1 (3!:4) ,|: clip x
+Subchunk2Size =. #x =. fmt audioconvert^:_1 ,|:x
+'AudioFormat BitsPerSample' =. fmt
 
-'ChunkID Format Subchunk1ID Subchunk2ID' =. _4 ]\ 'RIFFWAVEfmt data'
-AudioFormat =. 1
-ChunkSize =. 20 + (Subchunk1Size=.16) + Subchunk2Size =. #x
-BitsPerSample =. 16
-SampleRate =. F
-ByteRate =. SampleRate * NumChannels * BitsPerSample%8
-BlockAlign =. NumChannels * BitsPerSample%8
+for_i. ORDER do. (i{::NAME) =. ". i{::DEF end.
 
-typ=.{.@>typ [ len=.".@>len [ 'len typ name' =. <"_1|: WAVE_HEADER
-hdr =. ; len {.!.({.a.)&.> ('i'=typ) fromint&.>@]^:["0 ".&.> name
-
+hdr =. ; LEN {.!.({.a.)&.> ('i'=TYP) toint^:_1&.>@]^:["0 ".&.> NAME
 (hdr, x) 1!:2 boxopen y
 )
+
+NB. =========================================================
+cocurrent 'base'
+readwav  =: 3 : '3&{::^:((F;FMT) -: 2&{.) readwav_pwav_ y'
+writewav =: 4 : '((F;FMT;])^:(0=L.) x) writewav_pwav_ y'
