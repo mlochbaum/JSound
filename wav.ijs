@@ -61,10 +61,10 @@ NB. Return an invertible verb to convert bitstream to PCM data.
 audioconvert =: 1 : 0
 'AudioFormat BitsPerSample' =. u
 if. 1 = AudioFormat do.
-  b =. BitsPerSample%8
+  mb =. -b =. BitsPerSample%8
   'Bits per sample cannot exceed 64' assert b <: 8
   m2p =. -2^ p =. 2 >.@^. b
-  (-p) (3!:4) (-b)&(m2p&({.!.({.a.))\)(,@:) :. (m2p&((-b)&{.\)(,@:))
+  (2<.@^8*-b+m2p) <.@%~ :.* (-p) (3!:4) mb&(m2p&({.!.({.a.))\)(,@:) :. (m2p&(mb&{.\)(,@:))
 elseif. 3 = AudioFormat do.
   'Floating point only supports 32-bit' assert 32 = BitsPerSample
   _1&(3!:5)
