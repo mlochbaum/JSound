@@ -31,8 +31,7 @@ dither =: forceint@:(+ 0.5 + 0 -/@:(?@$)~ (2,$)) f.
 
 NB. Utilities to play a signal (using Linux)
 play0=: [: empty [: 2!:1 'aplay 1.wav' [ writewav&'1.wav'
-play =: [: play0 [: ,:^:(2-#@$) (3e4#0) ,"1~ <.
-play1=: [: play max clip@:* ]
+play =: [: play0 ,"1&(3e4#0)
 
 
 NB. =========================================================

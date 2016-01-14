@@ -126,7 +126,8 @@ NB. ---------------------------------------------------------
 NB. x is PCM data as output by readwav, and y is the file to write to.
 writewav =: 4 : 0
 'SampleRate fmt x' =. x
-NumChannels =. #x
+assert. 2 >: #$x
+NumChannels =. #x =. ,:^:(2 - #@$) x
 Subchunk2Size =. #x =. fmt audioconvert^:_1 fmt forceformat ,|:x
 'AudioFormat BitsPerSample' =. fmt
 
