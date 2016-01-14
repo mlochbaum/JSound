@@ -25,7 +25,9 @@ clip =: max <. min >. ]
 NB. x is an integer giving "sharpness". Perform a soft clip.
 softclip =: 3&$: : (4 :'(% [:%:^:x [:>: ^&(2<.@^x))&.:(%&(>:max)) y')
 NB. Convert a real signal to integers without introducing artifacts.
-dither =: 0.5 <.@:+ (+ 0 -/@:(?@$)~ (2,$))
+MAX =. ->: MIN =. _2 <.@^ 63
+forceint =. (((MAX*-.@]) + [: <. MIN>.*) <:&MAX)
+dither =: forceint@:(+ 0.5 + 0 -/@:(?@$)~ (2,$)) f.
 
 NB. Utilities to play a signal (using Linux)
 play0=: [: empty [: 2!:1 'aplay 1.wav' [ writewav&'1.wav'

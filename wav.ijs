@@ -64,13 +64,41 @@ if. 1 = AudioFormat do.
   mb =. -b =. BitsPerSample%8
   'Bits per sample cannot exceed 64' assert b <: 8
   m2p =. -2^ p =. 2 >.@^. b
-  (2<.@^8*-b+m2p) <.@%~ :.* (-p) (3!:4) mb&(m2p&({.!.({.a.))\)(,@:) :. (m2p&(mb&{.\)(,@:))
+  c =. 2 : 'm&(n&({.!.({.a.))\)(,@:)'
+  (2<.@^8*b-~2^p) <.@%~ :.* (-p) 3!:4 (mb c m2p) :. (m2p c mb)
 elseif. 3 = AudioFormat do.
   'Floating point only supports 32-bit' assert 32 = BitsPerSample
   _1&(3!:5)
 elseif. do.
   0 assert~ 'Unsupported audio format: ',":AudioFormat
 end.
+)
+
+NB. ---------------------------------------------------------
+NB. x is (AudioFormat,BitsPerSample).
+NB. Force y to fit in format x, emitting approprate warnings.
+WARN_DITHER =: 1  NB. Whether to warn on non-integer signal
+WARN_CLIP =: 1    NB. Whether to warn on out-of-bounds signal
+forceformat =: 4 : 0
+'f x' =. x
+if. f ~: 1 do. y return. end.
+y =. (-~2) + y  NB. Force integer or float
+if. (4 ~: 3!:0 y) do.
+  y1 =. <.y
+  if. y&-:`0:@.(4 ~: 3!:0) y1 do.
+    y =. y1
+  else.
+    smoutput^:WARN_DITHER 'Signal is non-integral; dithering...'
+    y =. dither_base_ y
+  end.
+end.
+if. x = 64 do. y return. end.
+'max min' =. (<:,-) 2<.@^<:x
+if. (>&max +.&:(+./@,) <&min) y do.
+  smoutput^:WARN_CLIP 'Signal out of bounds; clipping...'
+  y =. max <. min >. y
+end.
+y
 )
 
 NB. =========================================================
@@ -99,7 +127,7 @@ NB. x is PCM data as output by readwav, and y is the file to write to.
 writewav =: 4 : 0
 'SampleRate fmt x' =. x
 NumChannels =. #x
-Subchunk2Size =. #x =. fmt audioconvert^:_1 ,|:x
+Subchunk2Size =. #x =. fmt audioconvert^:_1 fmt forceformat ,|:x
 'AudioFormat BitsPerSample' =. fmt
 
 for_i. ORDER do. (i{::NAME) =. ". i{::DEF end.
