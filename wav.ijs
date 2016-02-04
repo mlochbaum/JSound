@@ -77,7 +77,7 @@ end.
 NB. ---------------------------------------------------------
 NB. x is (AudioFormat,BitsPerSample).
 NB. Force y to fit in format x, emitting approprate warnings.
-WARN_DITHER =: 1  NB. Whether to warn on non-integer signal
+WARN_DITHER =: 0  NB. Whether to warn on non-integer signal
 WARN_CLIP =: 1    NB. Whether to warn on out-of-bounds signal
 forceformat =: 4 : 0
 'f x' =. x
@@ -116,7 +116,7 @@ NB. Assign field values to field names.
 (NAME) =. hdr =. ('i'=TYP) toint&.>@]^:["0 hdr (</.~ I.) LEN
 NB. Check that fields match their definitions
 msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
-(*./ assert~ [: msg NAME#~-.) hdr = ".&.> DEF
+(*./ assert~ [: msg NAME#~-.) (NAME=<'ChunkSize') +. hdr = ".&.> DEF
 
 fmt =. AudioFormat,BitsPerSample
 SampleRate;fmt; |: (-NumChannels) ]\ fmt audioconvert y
