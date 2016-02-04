@@ -62,6 +62,28 @@ NB. Doesn't work...
 NB. getcoeffs =: [: (;&|. }.)/@:(% (<1 0)&{) (2*F) p.~ (] , (2 0 _2*|.) ,: 1 _1 1&*)"1
 
 NB. ---------------------------------------------------------
+NB. Peaking filter
+NB. y is (gain in dB, frequency, Q)
+peakf =: (3 : 0) makefilter
+'g f Q' =. y
+k =. 3 o. 1p1*f%F
+ab =. 1 0 2 3 0 4 { k p.~ _2 0 2 , (1,,&1)"0 ,(,.-) Q %~ 10^0>.(,~-)20%~g
+2 (}. ;&|. -@:{.) ({. %~ }.) ab
+)
+
+NB. ---------------------------------------------------------
+NB. First-order shelving filter
+NB. y is (type, gain in dB, frequency, Q)
+NB. where type is 1 for bass and _1 for treble shelf
+shelf =: (3 : 0) makefilter
+'t g f Q' =. ,&(%:2)^:(3=#) y
+k =. 3 o. 1p1*f%F
+v1 =. 10 ^ t * 0>.(,~-)40%~g
+ab =. ,/ 1 0 2&{"_1 (*:1<.v1) %~ (k*v1) p.~/ _2 0 2 , (1,.,.&1) (,-) Q
+2 (}. ;&|. -@:{.) ({. %~ }.) ab
+)
+
+NB. ---------------------------------------------------------
 NB. Notch filter
 NB. y is (frequency, width) in Hz.
 NB. Filter with no gain outside of the notch due to A.G. Constantinides
