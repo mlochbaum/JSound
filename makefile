@@ -1,4 +1,4 @@
-CFLAGS = -fPIC
+CFLAGS = -O3 -fPIC
 FLAGS = -shared
 TARGET = libsynth.so
 
