@@ -126,10 +126,14 @@ y =. 1!:1 boxopen y
 
 NB. Assign field values to field names.
 (NAME) =. hdr =. ('i'=TYP) toint&.>@]^:["0 hdr (</.~ I.) LEN
-(_2 0 22 e.~ se=.Subchunk1Size-18) assert 'Subchunk1Size is invalid'
-if. se>:0 do.
-  assert. se = toint 2{.Subchunk2ID
-  y =. se}.y
+NB. Handle extensible format
+(0 2 24 e.~ se=.Subchunk1Size-16) assert 'Subchunk1Size is invalid'
+if. se>0 do.
+  assert. se = 2 + toint 2{.Subchunk2ID
+  'ext y' =. se ({. ; }.) y
+  if. (AudioFormat = 65534) *. se>2 do.
+    AudioFormat =. toint 4{.ext
+  end.
 end.
 NB. Check that fields match their definitions
 e =. hdr ~: ".&.> DEF
