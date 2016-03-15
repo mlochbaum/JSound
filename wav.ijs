@@ -131,8 +131,10 @@ NB. Handle extensible format
 if. se>0 do.
   assert. se = 2 + toint 2{.Subchunk2ID
   'ext y' =. se ({. ; }.) y
-  if. (AudioFormat = 65534) *. se>2 do.
-    AudioFormat =. toint 4{.ext
+  if. se>2 do.
+    if. (AudioFormat = 65534) do. AudioFormat =. toint 4{.ext end.
+    NB. hacky handling of fact chunk
+    if. 'fact' -: 4{._8{.ext do. y =. (8+toint _4{.ext)}.y end.
   end.
 end.
 NB. Check that fields match their definitions
