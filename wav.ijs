@@ -64,9 +64,13 @@ if. 1 = AudioFormat do.
   b =. BitsPerSample%8
   'Bits per sample cannot exceed 64' assert b <: 8
   pp =. 2^ p =. 2 >.@^. b
-  cp =. (-pp){.b#1
-  cb =. (#!.(0{a.)^:_1~ cp$~(pp%b)*$) :. (#~ cp$~$) ` ] @. (b=pp)
-  (2<.@^8*b-~2^p) <.@%~ :.* (-p) 3!:4 cb f.
+  if. b=pp do.
+    (-p) 3!:4 ]
+  else.
+    cp =. (-pp){.b#1
+    cb =. (#!.(0{a.)^:_1~ cp$~(pp%b)*$) :. (#~ cp$~$)
+    (2<.@^8*b-~2^p) <.@%~ :.* (-p) 3!:4 cb f.
+  end.
 elseif. 3 = AudioFormat do.
   'Floating point only supports 32-bit' assert 32 = BitsPerSample
   _1&(3!:5)
