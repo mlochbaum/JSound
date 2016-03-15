@@ -25,7 +25,7 @@ clip =: max <. min >. ]
 NB. x is an integer giving "sharpness". Perform a soft clip.
 softclip =: 3&$: : (4 :'(% [:%:^:x [:>: ^&(2<.@^x))&.:(%&(>:max)) y')
 NB. Convert a real signal to integers without introducing artifacts.
-MAX =. ->: MIN =. _2 <.@^ 63
+MIN =. <:- MAX =. 33 b.~ _1
 forceint =. (((MAX*-.@]) + [: <. MIN>.*) <:&MAX)
 dither =: forceint@:(+ 0.5 + 0 -/@:(?@$)~ (2,$)) f.
 
