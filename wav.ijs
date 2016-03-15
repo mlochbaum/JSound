@@ -68,8 +68,7 @@ if. 1 = AudioFormat do.
     (-p) 3!:4 ]
   else.
     cp =. (-pp){.b#1
-    cb =. (#!.(0{a.)^:_1~ cp$~(pp%b)*$) :. (#~ cp$~$)
-    (8*b-pp) 34 b. (-p) 3!:4 cb f.
+    (8*b-pp) 34 b. (-p) 3!:4 (#!.(0{a.)^:_1~ cp$~(pp%b)*$) :. (#~ cp$~$)
   end.
 elseif. 3 = AudioFormat do.
   'Floating point only supports 32-bit' assert 32 = BitsPerSample
@@ -119,9 +118,16 @@ y =. 1!:1 boxopen y
 
 NB. Assign field values to field names.
 (NAME) =. hdr =. ('i'=TYP) toint&.>@]^:["0 hdr (</.~ I.) LEN
+(_2 0 22 e.~ se=.Subchunk1Size-18) assert 'Subchunk1Size is invalid'
+IGNORE =. ;:'ChunkSize'
+if. se>:0 do.
+  assert. se = toint 2{.Subchunk2ID
+  IGNORE =. IGNORE , ;:'Subchunk1Size Subchunk2ID'
+  y =. se}.y
+end.
 NB. Check that fields match their definitions
 msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
-(*./ assert~ [: msg NAME#~-.) (NAME=<'ChunkSize') +. hdr = ".&.> DEF
+(*./ assert~ [: msg NAME#~-.) (NAME e. IGNORE) +. hdr = ".&.> DEF
 
 fmt =. AudioFormat,BitsPerSample
 SampleRate;fmt; |: (-NumChannels) ]\ fmt audioconvert y
