@@ -26,25 +26,33 @@ NB. Other audio formats may be supported in the future.
 cocurrent 'pwav'
 
 NB. ---------------------------------------------------------
+NB. Columns are:
+NB.   LEN:  Length of field (in bytes)
+NB.   TYP:  Whether to leave as chars (c) or convert to an integer (i)
+NB.   ERR:  Behavior on invalid value: fail (e), warn (w), or ignore (.)
+NB.         (Fields with * depend on context)
+NB.   NAME: Field name
+NB.   DEF:  Expected field value, or blank
 WAVE_HEADER =: ((;:@{. , >:@[<@}.])~ i.&'|');._2 ] 0 : 0
-4 c ChunkID        |'RIFF'
-4 i ChunkSize      |20 + Subchunk1Size + Subchunk2Size
-4 c Format         |'WAVE'
-4 c Subchunk1ID    |'fmt '
-4 i Subchunk1Size  |16
-2 i AudioFormat    |
-2 i NumChannels    |
-4 i SampleRate     |
-4 i ByteRate       |SampleRate * NumChannels * BitsPerSample%8
-2 i BlockAlign     |NumChannels * BitsPerSample%8
-2 i BitsPerSample  |
-4 c Subchunk2ID    |'data'
-4 i Subchunk2Size  |
+4 c e ChunkID        |'RIFF'
+4 i w ChunkSize      |20 + Subchunk1Size + Subchunk2Size
+4 c e Format         |'WAVE'
+4 c e Subchunk1ID    |'fmt '
+4 i * Subchunk1Size  |16
+2 i . AudioFormat    |
+2 i . NumChannels    |
+4 i . SampleRate     |
+4 i w ByteRate       |SampleRate * NumChannels * BitsPerSample%8
+2 i w BlockAlign     |NumChannels * BitsPerSample%8
+2 i . BitsPerSample  |
+4 c * Subchunk2ID    |'data'
+4 i . Subchunk2Size  |
 )
 
-'LEN TYP NAME DEF' =: <"_1|: WAVE_HEADER
+'LEN TYP ERR NAME DEF' =: <"_1|: WAVE_HEADER
 LEN =: ".@> LEN
 TYP =: ; TYP
+ERR =: ; ERR
 
 NB. Topological order for field definitions
 tsort =. (] , 1 i.~ ] (0"0@[)`[`]} (*./@:e.&> <))^:(>&#)^:_ & ($0)
@@ -119,15 +127,16 @@ y =. 1!:1 boxopen y
 NB. Assign field values to field names.
 (NAME) =. hdr =. ('i'=TYP) toint&.>@]^:["0 hdr (</.~ I.) LEN
 (_2 0 22 e.~ se=.Subchunk1Size-18) assert 'Subchunk1Size is invalid'
-IGNORE =. ;:'ChunkSize'
 if. se>:0 do.
   assert. se = toint 2{.Subchunk2ID
-  IGNORE =. IGNORE , ;:'Subchunk1Size Subchunk2ID'
   y =. se}.y
 end.
 NB. Check that fields match their definitions
+e =. hdr ~: ".&.> DEF
 msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
-(*./ assert~ [: msg NAME#~-.) (NAME e. IGNORE) +. hdr = ".&.> DEF
+alert =. (`(msg@:#&NAME))(`(+./))(@.1 0 2) (@:(e *. ERR&e.))
+(assert -.) alert 'e',(se<0)#'*'
+smoutput@:('Warning: ',[)^:] alert 'w'
 
 fmt =. AudioFormat,BitsPerSample
 SampleRate;fmt; |: (-NumChannels) ]\ fmt audioconvert y
