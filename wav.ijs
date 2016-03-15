@@ -69,7 +69,7 @@ if. 1 = AudioFormat do.
   else.
     cp =. (-pp){.b#1
     cb =. (#!.(0{a.)^:_1~ cp$~(pp%b)*$) :. (#~ cp$~$)
-    (2<.@^8*b-~2^p) <.@%~ :.* (-p) 3!:4 cb f.
+    (8*b-pp) 34 b. (-p) 3!:4 cb f.
   end.
 elseif. 3 = AudioFormat do.
   'Floating point only supports 32-bit' assert 32 = BitsPerSample
