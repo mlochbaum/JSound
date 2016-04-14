@@ -140,7 +140,7 @@ end.
 NB. Check that fields match their definitions
 e =. hdr ~: ".&.> DEF
 msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
-alert =. (`(msg@:#&NAME))(`(+./))(@.1 0 2) (@:(e *. ERR&e.))
+alert =. ((msg@:#&NAME)`)(`(+./))(`:6) (@:(e *. ERR&e.))
 (assert -.) alert 'e',(se<0)#'*'
 smoutput@:('Warning: ',[)^:] alert 'w'
 
