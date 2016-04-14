@@ -3,6 +3,7 @@ require '~user/Sound/wav.ijs math/fftw ~user/Sound/filter.ijs'
 NB. Assume 16-bit, 44.1 kHz audio
 'min max' =: _32768 32767
 F =: 44100
+Fv =: ".bind'F'
 
 NB. ---------------------------------------------------------
 NB. General manipulation
@@ -50,8 +51,8 @@ NB. Each generator takes a list of frequencies and generates a signal
 NB. of the same length.
 NB. Utilities...
 ce =: <:@:+:
-hz =: <.@%~&F
-th =: [: +/\ %&F
+hz =: <.@%~ Fv
+th =: +/\@:% Fv
 rand  =: [: ce ?@$&0
 
 NB. Sawtooth wave //////

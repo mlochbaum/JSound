@@ -25,8 +25,8 @@ NB. Coefficients for specific filters
 
 makefilter =: 1 :'u 2 :''(u n)&filter'''
 
-lpcutoff =: (F%2p1) * <:&.%
-hpcutoff =: (F%2p1) * <:@%
+lpcutoff =: [: (*Fv) :. (%Fv) 2p1%~<:&.%
+hpcutoff =: [: (*Fv) :. (%Fv) 2p1%~<:@%
 
 NB. two-pole low-pass filter coefficient generator
 NB. y is the corrected cutoff frequency
@@ -41,9 +41,9 @@ assert. 3 > t =. ('bw';'cd';'bessel') i. <t
 C  =.  (4%:<:) ` (%:@<:@%:) ` (3 %:@* 0.5 -~ %:@-&0.75) @. t   n%:2
 X  =.  t {:: (%:2 1) , 2 1 ,: 3 3
 if. ifhp do.
-  (1 _1 1; 1 _1) *&.> X getlpcoeffs2 0.5 - (C%F)&*
+  (1 _1 1; 1 _1) *&.> X getlpcoeffs2 0.5 - (C%Fv)*]
 else.
-  X getlpcoeffs2 (%C*F)&*
+  X getlpcoeffs2 (% C*Fv)
 end.
 )
 
