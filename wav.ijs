@@ -137,6 +137,12 @@ if. se>0 do.
     if. 'fact' -: 4{._8{.ext do. y =. (8+toint _4{.ext)}.y end.
   end.
 end.
+NB. Ignore remaining subchunks
+s =. Subchunk2Size
+while. -.'data'-:Subchunk2ID do.
+  'Subchunk2ID s y' =. (4&{. ; toint@:((4+i.4)&{) ; 8&}.) s }. y
+  Subchunk2Size =. Subchunk2Size + s+8
+end.
 NB. Check that fields match their definitions
 e =. hdr ~: ".&.> DEF
 msg =. 'Values for fields ' , ' are incorrect' ,~ ;:^:_1
