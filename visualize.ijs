@@ -14,7 +14,7 @@ NB. Plot the Fourier transform or transforms of y on a log-log scale.
 showfft =: FFT_OPTS plot fftplotarg
 NB. The same, but average by u 
 showfft_avg =: 1 : 0
-FFT_OPTS plot (-u) (+/%#)\&.> fftplotarg
+FFT_OPTS plot (-u) (+/%#)\"1&.> fftplotarg
 )
 
 NB. Show the transfer function of filter u
