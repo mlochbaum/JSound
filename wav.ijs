@@ -174,6 +174,9 @@ cocurrent 'base'
 readwav  =: 3 : '_1&{::^:((F;FMT) -: 2&{.) readwav_pwav_ y'
 writewav =: 4 : '((F;FMT;])^:(0=L.) x) writewav_pwav_ y'
 
+NB. Read, setting F and FMT as a side effect.
+readwav_set =: 3 : '(_1{::t) [ ''F FMT'' =: }:t =. readwav_pwav_ y'
+
 NB. Read, resampling to fit current frequency
 NB. Depends on a resample verb, such as that found in soxresample.ijs.
 readwav_coerce =: 3 : '((F,~0&{::) resample _1&{::) readwav_pwav_ y'
