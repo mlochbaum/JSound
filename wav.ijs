@@ -180,3 +180,11 @@ readwav_set =: 3 : '(_1{::t) [ ''F FMT'' =: }:t =. readwav_pwav_ y'
 NB. Read, resampling to fit current frequency
 NB. Depends on a resample verb, such as that found in soxresample.ijs.
 readwav_coerce =: 3 : '((F,~0&{::) resample _1&{::) readwav_pwav_ y'
+
+NB. ---------------------------------------------------------
+NB. Because sound scripts frequently need to access materials in the same
+NB. directory, it is useful to have a verb giving the path of the current
+NB. script. This functionality is annoyingly absent elsewhere, so it is
+NB. provided here.
+cur_script =: 3 :'(4!:3$0) {::~ 4!:4<''y'''
+cur_dir =: ({.~ 1+i:&'/')@:cur_script
