@@ -1,4 +1,4 @@
-require '~user/Sound/synth.ijs plot'
+require '~user/Sound/synth.ijs plot viewmat'
 
 NB. Given a frequency, show the nearest (12-note chromatic) note to it.
 NOTES =: (((,#&'#')&.> -.@:~:) 'AABCCDDEFFGG')
@@ -19,3 +19,10 @@ FFT_OPTS plot (-u) (+/%#)\"1&.> fftplotarg
 
 NB. Show the transfer function of filter u
 showfilter =: 1 : 'showfft u F{.1'
+
+NB. ---------------------------------------------------------
+NB. With viewmat
+stft =: 512&$: : ((2 |@:(,~^:_1)@fftw@,\ -@[ ]\ ])"0 1)
+stftview =: [: (,~|.)~/@:(0 2 1&|:)^:(2<#@$) stft
+showstft =: viewmat@:stftview
+showlogstft =: viewmat@:(0>.^.)@:stftview
