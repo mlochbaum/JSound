@@ -11,13 +11,19 @@ NB. Each verb works on multi-channel signals.
 
 NB. Add two signals x and y or a list of (boxed) signals y
 NB. Extend to the length of the longest signal.
-add =: +&:>/@:({."1&.>~ [:>./{:@$@>)@:(] : ;)
+add =: +&.>/(>@:)@:({."1&.>~ [:>./{:@$@>)@:(] : ;)
 NB. Like add, but concatenate instead.
 concat =: ([: |: [: ; |:&.>) : (,"1)
 NB. Like (|.), but the end of the signal does not wrap around.
 shift =: }."1 ` ((0$~-@[),"1]) @. (0>[)
 NB. x is (location,length). Obtain that part of the signal.
 slice =: ((+(**i.))/@[ { ])"1
+NB. u is a verb. Apply u to the slice of y given by x.
+onslice =: 1 : 0
+:
+i =. (+(**i.))/ x
+(u i {"1 y) i}"1 y
+)
 NB. Repeat signal y x times.
 rep =: ((*#) $ ])"1
 
@@ -93,8 +99,13 @@ NB. Fast convolution with the overlap-save method.
 NB. x should be shorter than y.
 conv1 =: 4 : 0"1
   'N L' =. ((],-~) [: >.&.(2&^.) 4&*) <:#x
-  y1 =. ({.~ N + <.&.(%&L)@:#) (0"0 x),y
+  y1 =. ({.~ N + <.&.(%&L)@:#) (0#~<:#x),y
   (#y) {. , (L,:N) ((-L) {. 9 o. (fftw N{.x)&*&.fftw);._3 y1
+)
+NB. Using the overlap-add method
+conv2 =: 4 : 0"1
+  'N L' =. ((],-~) [: >.&.(2&^.) 3&*) <:#x
+  (#y) {. ; +&.>//. (-L) ((-L) <@(L&{.)\ 9 o. [: (fftw N{.x)&*&.fftw N&{.)\ y
 )
 NB. x is a reverb IR.
 NB. Lengthens y by x to avoid cutting off the final reverb, then convolves.
