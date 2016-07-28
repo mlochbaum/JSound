@@ -49,7 +49,7 @@ align =: 3 : 0
 )
 
 NB. Internal utility to update the range. Use setrange.
-updaterange =: 3 : 'RANGES =: RANGES , RANGE =: y'
+updaterange =: 3 : 'RANGE =: y [ RANGES =: RANGES , RANGE'
 
 NB. (factor) zoom (location)
 NB. Reduces the range by factor.
