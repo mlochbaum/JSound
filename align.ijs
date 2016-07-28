@@ -48,6 +48,9 @@ align =: 3 : 0
   align y
 )
 
+NB. Internal utility to update the range. Use setrange.
+updaterange =: 3 : 'RANGES =: RANGES , RANGE =: y'
+
 NB. (factor) zoom (location)
 NB. Reduces the range by factor.
 NB. If factor is omitted, the largest value up to 20 which leaves the
@@ -57,9 +60,15 @@ NB.   length and beginning at the old start of the range.
 zoom =: 3 : 0
   y zoom~ (% <.&.(10&^.)@:-:) {:RANGE
 :
-  RANGES =: RANGES , RANGE
-  ashow RANGE =: ((0,~[) + (y,1)*x%~])/ RANGE
+  setrange ((0,~[) + (y,1)*x<.@%~])/ RANGE
 )
+NB. Move right by y range units (1 if y is empty).
+NB. Use negative y to move left.
+shiftright =: 3 : 0
+  ashow RANGE =: (+ ({.y,1)&*)/\. RANGE
+)
+NB. Reset the range entirely.
+setrange =: ashow@:updaterange
 
 NB. Undo the last zoom.
 unzoom =: 3 : 0
