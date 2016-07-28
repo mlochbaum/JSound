@@ -38,6 +38,7 @@ NB. Optional x supplies the path of the file's directory.
 align =: 3 : 0
   'PATH must exist (or be passed as x)' assert 0 = 4!:0 <'PATH'
   'name range' =. (2 {. ,&a:) boxopen y
+  RANGES =: 0 2$0
   RANGE =: (0 3*F) (({.~ 2-#) , ]) range
   name =. ,&'.wav'^:('.' -.@e. ]) name
   WAVEFORM =: readwav_set ('.';'1.') rplc~ FILE=:PATH,name
@@ -56,7 +57,13 @@ NB.   length and beginning at the old start of the range.
 zoom =: 3 : 0
   y zoom~ (% <.&.(10&^.)@:-:) {:RANGE
 :
+  RANGES =: RANGES , RANGE
   ashow RANGE =: ((0,~[) + (y,1)*x%~])/ RANGE
+)
+
+NB. Undo the last zoom.
+unzoom =: 3 : 0
+  ashow 'RANGES RANGE' =: (}: ; {:) RANGES
 )
 
 NB. y is a number.
