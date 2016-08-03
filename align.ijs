@@ -44,7 +44,7 @@ align =: 3 : 0
   WAVEFORM =: readwav_set ('.';'1.') rplc~ FILE=:PATH,name
   ashow ''
 :
-  PATH =: x
+  PATH =: (,'/'-.{:) x
   align y
 )
 
