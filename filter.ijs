@@ -20,6 +20,9 @@ assert. 8 = 3!:0 y  NB. Input must be floating point
 y
 )
 
+NB. Compute the frequency response from coefficients
+response =: (; 1,-)&|.&>/@[  p.&>(|@:%/@:)"_ 0  (j.2p1)^@:*(%Fv)@]
+
 NB. ---------------------------------------------------------
 NB. Coefficients for specific filters
 
