@@ -94,32 +94,24 @@ a,b
 )
 
 
+NB. ---------------------------------------------------------
 (0 : 0) NB. Derivation
-((1+*:|r) * 1+*:z) = 4*Re(r)*z
-z = ((2*Re) ± %:(*:2*Re)-*:1+*:|r) % 1+*:|r
-  = * (2*Re) ± %:(*:2*Re)-*:1+*:|r
-angle = _3 o. %: 1 -~ *:(1+*:|r)%(2*Re)
-      = _3 o. _4 o. (1+r*rc) % (r+rc)
-      = _3 o. _4 o. (1+*:r) % (2*r*cosθ)
-
-dt/dθ(0) = dH/ds(1)
-         = (2*rs-1) % (1+rs-2*re)
-
-dH/ds(_1) = (2*1-rs) % (1+rs+2*re)
-
-e^j.T(ω) = H(e^j.ω)
-j.(e^j.T(ω))*Tp(ω) = Hp(e^j.ω)*j.e^j.ω
-Tp(ω) = Hp(e^j.ω) * e^j.ω-T(ω)
-      = Hp(s) * s % H(s)
-
-H   = (1+(rs**:)-2*re&*) % (*:+rs-2*re&*)
+NB. Transfer function for an all-pass filter: argument is z,
+NB. and rs and re are (*:@|) and (9&o.) of the complex parameter
+H   = (1 + (rs**:) - 2*re&*) % (*: + rs - 2*re&*)
+NB. Derivative with respect to z
 Hp  = (2 * (re-~rs&*) - H*(1-re)) % (*:+rs-2*re&*)
-    = (2 * (rs-H)&* - re*H-1) % (*:+rs-2*re&*)
+    = (2 * (* rs-H) - re*1-~H) % (*:+rs-2*re&*)
 
-NB. Argument is s = ^j.ω
-T@:(^@j.) = (Hp * (%H))
-          = (2*s * (s*rs-H) - re*H-1) % (1 + (rs**:s) - 2*re*s)
+NB. Definition of the phase transfer function T
+(^j.T ω) = (H ^j.ω)
+NB. Derivative in terms of H and its derivative Hp
+j.(^j.T(ω))*Tp(ω) = Hp(^j.ω)*j.^j.ω
+Tp(ω) = Hp(^j.ω) * ^j.ω-T(ω)
+      = Hp(s) * s % H(s)
+      = (2*s * (s*rs-H) - re*H-1) % (1 + (rs**:s) - 2*re*s)
 
+NB. Simplified at 1 and _1 (0 and maximum frequency)
 H(1)  = 1
 T(0)  = 0
 Tp(0) = (2*rs-1) % (1+rs-2*re)
@@ -135,31 +127,25 @@ T(ω) = -n*ω
 Tp(ω) = -n
 
 NB. Constraints
-Tp_a(0)  =  Tp_b(0) - n
-Tp_a(π)  ≃  Tp_b(π)
-Tp_a(f)  =  Tp_b(f)
+NB. We refer to the forward and backwards filters with
+NB. postfixes of 1 and 2.
+Tp1(0)  =  Tp2(0) - n
+Tp1(π)  ≃  Tp2(π)
+Tp1(f)  =  Tp2(f)
 
+NB. In a symmetric notation: [a,b] = (a1%b1) - (a2%b2)
+NB. where an and bn are the values for the nth filter.
+NB. z2 = *:z
 (-n%2)= [rs-1 , 1+rs-2*re]
 0    =  [rs-1 , 1+rs+2*re]
-0    =  [((z*rs-H) - re*H-1) , (1 + ((*:z)*rs) - (2*z*re))]
-
-Tp(0)%Tp(π)  =  (1+rs+2*re) % (1+rs-2*re)
-             =  1 + (4*re) % (1+rs-2*re)
-
-NB. In coordinates (unused)
-Tp(0)  =  2  *  b^2+(a+1)*(a-1) % b^2+(a-1)^2
-       =  2 + (4*a-1) % b^2+(a-1)^2
-Tp(π)  =  2  *  b^2+(a+1)*(a-1) % b^2+(a+1)^2
-       =  2 - (4*a+1) % b^2+(a+1)^2
-
-((a1-1) % b1^2+(a1-1)^2) = ((a2-1) % b2^2+(a2-1)^2) - n%4
-((a1+1) % b1^2+(a1+1)^2) = ((a2+1) % b2^2+(a2+1)^2)
+0    =  [((z*rs-H) - re*H-1) , (1 + (z2*rs) - (2*z*re))]
 
 NB. Useful identity
+NB. Define (reC = re2 - re1) and (rsC = rs2 - rs1)
 rs1*re2 - rs2*re1  =  (rs1*re1 + rs1*reC) - (rs1*re1 + rsC*re1)
                    =  rs1*reC - rsC*re1
 
-NB. First constraint
+NB. Second constraint, where [12] indicates the value with 1 and 2 swapped
 ((rs1-1) * 1+rs2+2*re2) = [12]
 (rs1*(1+2*re2) - (rs2+2*re2)) = [12]
 ((rs1*1+re2) + re1) = [12]
@@ -169,12 +155,12 @@ NB. First constraint
    =  (rsC * 1+re1) + (reC * 1-rs1)
 (reC % re1+1) = (rsC % rs1-1)
 
-NB. Let (reC =: S*re1+1) and (rsC =: S*rs1-1)
+NB. Let S be defined by (reC =: S*re1+1) and (rsC =: S*rs1-1)
 rs1*re2 - rs2*re1  =  rs1*reC - rsC*re1
                    =  S * (rs1*re1+1) - (re1*rs1-1)
                    =  S * rs1 + re1
 
-NB. Cross-multiply second constraint and subtract first
+NB. Cross-multiply first constraint and subtract second
 (rs2-rs1) = (n%8)*(1+rs1-2*re1)*(1+rs2-2*re2)
 (S*rs1-1) = (n%8)*(1+rs1-2*re1)*((1+rs1-2*re1) + S*(rs1-1)-2*(re1+1))
 (S * (rs1-1)*(8%n)) = (*: 1+rs1-2*re1) - S*(1+rs1-2*re1)*(rs1-~3+2*re1)
@@ -182,9 +168,7 @@ S  =  (*: 1+rs1-2*re1) % (((rs1-1)*(8%n)) + (1+rs1-2*re1)*(rs1-~3+2*re1))
 
 
 NB. Third constraint
-H  =  (1 + z2*rs - 2*z*re) % (rs + z2 - 2*z*re) NB. For reference
-
-NB. Drop factor of 2*z
+NB. Value of Tp, dropping factor of 2*z
 ((z*rs1-H1) + re1*H1-1) * (1 + (z2*rs2) - (2*z*re2))  =  [12]
 (re1 -~ z*rs1 + H1*re1-z) * (1 + (z2*rs2) - (2*z*re2))  =  [12]
 ((z*rs1) - (re1 + z2*rs1*re2)) + (H1*re1-z)*(1 + (z2*rs2) - (2*z*re2))  =  [12]
@@ -199,12 +183,10 @@ NB. Divide by z+1
 H1*H2  =  ((rs1*z) + (re1*z-1) - 1) % ((-rs1) + (re1*z-1) + z)
        =  1  +  (z+1)*(1-rs1) % (rs1 + (re1*1-z) - z)
 
+NB. Value of H2 in terms of re1 and rs1
+NB. With these and the previous definition, we obtain a 4th-order
+NB. polynomial in re1 and rs1.
 a = 2*z*re1,  r = rs1
-H2 = ((1 + z2*r - a) + S*((z2*r - a) - (z*z+2)))  %  ((z2 + r - a) + S*((r - a) - (1+2*z)))
-H1 = ((1 + z2*r - a)                           )  %  ((z2 + r - a)                        )
-
-(rs1-1) = T*((-:rs1+1) - re1)
-re1 = (2%~1+rs1) + (T%~1-rs1)
-    = (2,T) +/@:%~ 1(+,-)rs1
-    = (T+&%2) + rs1*(T-~&%2)
+H1 = ((1 + (z2*r) - a)                             )  %  ((z2 + r - a)                        )
+H2 = ((1 + (z2*r) - a) + S*(((z2*r) - a) - (z*z+2)))  %  ((z2 + r - a) + S*((r - a) - (1+2*z)))
 )
