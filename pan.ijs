@@ -55,6 +55,48 @@ if. x ~: 0.5 do.
 end.
 ir reverb y
 )
+NB. Empirically determined good coefficients for panap
+NB. y is a single parameter giving the delay for low frequencies.
+shift_coeff =: 3 : 0
+  f =. 732 + 79000 % 1.6 ^~ 10 + y
+  rs =. 1.097 _2.054 2.16 p. 1e4 %~ f
+  y,rs,f
+)
+
+NB. Data for shift_coeff
+0 : 0
+Values of rs which make the third derivative of the phase transfer at
+zero equal to zero. (rs * 1000) is given.
+    frequency of max phase difference
+      2000 1750 1500 1250 1100 1000
+s  5   782  804  827  852  868  878
+h 10   816  829  845  864  876  885
+i 15   849  857  866  878  887  894
+f 20   875  879  885  893  899  904
+t 25   895  897  901  906  910  913
+
+"Good" shift, frequency, and rs values.
+Frequency is determined from the formula in shift_coeff.
+In shift_coeff, rs is modelled as quadratic w.r.t frequency.
+~0    2716  0.698
+ 0.1  2685  0.701
+ 1    2436  0.725
+ 2.5  2121  0.759
+ 5    1769  0.802
+10    1387  0.853
+15    1190  0.882
+20    1074  0.900
+25    1000  0.913
+30     948  0.924
+)
+
+(0 : 0)
+NB. Tools for working with all-pass filters
+NB. Coefficients for an all-pass filter with complex parameter y
+apc =: (; -@|.@}.)@:(1: , -@+:@(9&o.) , *:@|)
+NB. Compute phase from filter coefficients
+phase =: (; 1,-)&|.&>/@[  p.&>(%/@:)"_ 0  (-j.2p1)^@:*(%Fv)@]
+)
 
 NB. =========================================================
 NB. Argument is (number of samples to shift),(magnitude),(stop frequency).
