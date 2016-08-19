@@ -43,9 +43,9 @@ channels are combined.
 )
 
 NB. Pan with all-pass filters. Arguments are the same as pan
-NB. Delays the input by slightly more than 100 samples.
+NB. Delays the input by slightly more than 60 samples.
 panap =: 4 : 0
-ir =. 2#,:100=i.500
+ir =. 2#,:60=i.180
 if. x ~: 0.5 do.
   far =. 0.5<x
   off =. | <:+:x
