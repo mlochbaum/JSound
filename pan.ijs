@@ -52,6 +52,7 @@ if. x ~: 0.5 do.
   ir =. (+ [: (,:-) off * [:5000 lowpass {:) ir
   'a b' =. get_panap_coeff shift_coeff off*25
   ir =. far |. (,:  [: b allpass&.|. a allpass)/ ir
+  ir =. (-:>:2 o. 1p1*}.I 6) (|.@[fadefront fadeback) ir
 end.
 ir reverb y
 )
