@@ -190,15 +190,16 @@ rs1*re2 - rs2*re1  =  (rs1*re1 + rs1*reC) - (rs1*re1 + rsC*re1)
 
 NB. Second constraint, where [12] indicates the value with 1 and 2 swapped
 ((rs1-1) * 1+rs2+2*re2) = [12]
-(rs1*(1+2*re2) - (rs2+2*re2)) = [12]
-((rs1*1+re2) + re1) = [12]
-0  =  (rs2-rs1) + (re2-re1) + (re1*rs2 - re2*rs1)
-   =  (rs2-rs1) + (re1*(rs2-1) - re2*(rs1-1))
-   =  rsC + reC + (re1*rsC - reC*rs1)
-   =  (rsC * 1+re1) + (reC * 1-rs1)
+((rs1 * 1+2*re2) - (rs2+2*re2)) = [12]
+(rs1 + re1 + rs1*re2) = [12]
+0  =  rsC + reC + (re1*rsC - reC*rs1)
+   =  (rsC * re1+1) - (reC * rs1-1)
 (reC % re1+1) = (rsC % rs1-1)
 
-NB. Let S be defined by (reC =: S*re1+1) and (rsC =: S*rs1-1)
+NB. Thus, we can define S so that
+reC = S*re1+1
+rsC = S*rs1-1
+
 rs1*re2 - rs2*re1  =  rs1*reC - rsC*re1
                    =  S * (rs1*re1+1) - (re1*rs1-1)
                    =  S * rs1 + re1
