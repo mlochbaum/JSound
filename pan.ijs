@@ -50,7 +50,7 @@ if. x ~: 0.5 do.
   far =. 0.5<x
   off =. | <:+:x
   ir =. (+ [: (,:-) off * [:5000 lowpass {:) ir
-  'a b' =. get_panap_coeff (off*25),0.89 1000
+  'a b' =. get_panap_coeff shift_coeff off*25
   ir =. far |. (,:  [: b allpass&.|. a allpass)/ ir
 end.
 ir reverb y
