@@ -127,7 +127,7 @@ y =. 1!:1 boxopen y
 NB. Assign field values to field names.
 (NAME) =. hdr =. ('i'=TYP) toint&.>@]^:["0 hdr (</.~ I.) LEN
 NB. Handle extensible format
-(0 2 24 e.~ se=.Subchunk1Size-16) assert 'Subchunk1Size is invalid'
+'Subchunk1Size is invalid' assert (0 2 24 e.~ se=.Subchunk1Size-16)
 if. se>0 do.
   assert. se = 2 + toint 2{.Subchunk2ID
   'ext y' =. se ({. ; }.) y
