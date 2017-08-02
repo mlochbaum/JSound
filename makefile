@@ -1,4 +1,4 @@
-CFLAGS = -O3 -fPIC
+CFLAGS = -O3 -fPIC -ffast-math -march=native
 FLAGS = -shared
 TARGET = libsynth.so
 
