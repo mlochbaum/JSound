@@ -94,7 +94,7 @@ In shift_coeff, rs is modelled as quadratic w.r.t frequency.
 (0 : 0)
 NB. Tools for working with all-pass filters
 NB. Coefficients for an all-pass filter with complex parameter y
-apc =: (; -@|.@}.)@:(1: , -@+:@(9&o.) , *:@|)
+apc =: (; -@|.@}.)@:(1: , -@:+:@:(9&o.) , *:@:|)
 NB. Compute phase from filter coefficients
 phase =: (; 1,-)&|.&>/@[  p.&>(%/@:)"_ 0  (-j.2p1)^@:*(%Fv)@]
 )
@@ -140,7 +140,7 @@ a,b
 NB. ---------------------------------------------------------
 (0 : 0) NB. Derivation
 NB. Transfer function for an all-pass filter: argument is z,
-NB. and rs and re are (*:@|) and (9&o.) of the complex parameter
+NB. and rs and re are (*:@:|) and (9&o.) of the complex parameter
 H   = (1 + (rs**:) - 2*re&*) % (*: + rs - 2*re&*)
 NB. Derivative with respect to z
 Hp  = (2 * (re-~rs&*) - H*(1-re)) % (*:+rs-2*re&*)
