@@ -2,8 +2,8 @@
 Utilities for aligning a wave file to a point which is visible in its
 waveform.
 
-The file should initially be stored as PATH/name1.wav, where PATH and
-name are arbitrary but there must be a 1 before the extension.
+The file should initially be stored as PATH/name_.wav, where PATH and
+name are arbitrary but there must be an _ before the extension.
 To align, use
 
 load '~user/Sound/align.ijs'
@@ -32,8 +32,8 @@ require '~user/Sound/synth.ijs plot'
 
 NB. y is the file's name or (name ; starting range),
 NB.   with range as in the left argument of slice.
-NB. The unaligned file should be stored with a 1 before its extension;
-NB.   awrite will write to the same file without a 1.
+NB. The unaligned file should be stored with an _ before its extension;
+NB.   awrite will write to the same file without an _.
 NB. Optional x supplies the path of the file's directory.
 align =: 3 : 0
   'PATH must exist (or be passed as x)' assert 0 = 4!:0 <'PATH'
@@ -41,7 +41,7 @@ align =: 3 : 0
   RANGES =: 0 2$0
   RANGE =: (0 3*F) (({.~ 2-#) , ]) range
   name =. ,&'.wav'^:('.' -.@e. ]) name
-  WAVEFORM =: readwav_set ('.';'1.') rplc~ FILE=:PATH,name
+  WAVEFORM =: readwav_set ('.';'_.') rplc~ FILE=:PATH,name
   ashow ''
 :
   PATH =: (,'/'-.{:) x
