@@ -96,8 +96,8 @@ NB. Filter with no gain outside of the notch due to A.G. Constantinides
 NB. The width is for 3dB attenuation.
 notch =: (3 : 0) makefilter
 'w0 dw' =. 2p1 * y%F
-k =. 3 o. -:dw
-(_2*2 o. w0) ({.@] %~&.> (1,1,~[) (;-) [,~{:@]) 1(+,-)k
+c =. _2*2 o. w0
+1 (+ %~&.> (1,c,1) (;-) c,~-) 3 o. -:dw
 )
 
 NB. ---------------------------------------------------------
