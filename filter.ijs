@@ -75,7 +75,7 @@ ab =. 1 0 2 3 0 4 { k p.~ _2 0 2 , (1,,&1)"0 ,(,.-) Q %~ 10^0>.(,~-)20%~g
 )
 
 NB. ---------------------------------------------------------
-NB. First-order shelving filter
+NB. Second-order shelving filter
 NB. y is (type, gain in dB, frequency, Q)
 NB. where type is 1 for bass and _1 for treble shelf
 shelf =: (3 : 0) makefilter
@@ -104,6 +104,17 @@ NB. ---------------------------------------------------------
 NB. all-pass filter
 NB. y is a complex number, which should have magnitude less than 1.
 allpass =: (;-@|.@}.)@:(1:,-@+:@(9&o.),*:@|) makefilter
+
+NB. ---------------------------------------------------------
+NB. Butterworth filters with resonance
+NB. Argument is (frequency, Q)
+NB. Identical to bwlp2 and bwhp2 when Q=%%:2
+resfilt =. (1 : 0)~/ makefilter
+((+:@[%~1 o.]) (>:@[ %&.>~ u ; <:@[,2*]) 2 o. ]) 2p1*]%Fv
+)
+lpq_f =: (2  1 2 %~ 1-]) resfilt
+hpq_f =: (2 _1 2 %~ 1+]) resfilt
+bpq_f =: (1 0 _1*[)      resfilt
 
 NB. ---------------------------------------------------------
 NB. high-pass filter with variable frequency
