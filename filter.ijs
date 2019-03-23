@@ -93,19 +93,11 @@ NB. ---------------------------------------------------------
 NB. Notch filter
 NB. y is (frequency, width) in Hz.
 NB. Filter with no gain outside of the notch due to A.G. Constantinides
-NB. The width is for 3dB attenuation although in practice the filter
-NB. seems to be about 15% wider.
+NB. The width is for 3dB attenuation.
 notch =: (3 : 0) makefilter
 'w0 dw' =. 2p1 * y%F
-cw =. 2 o. w0
-k =. (2%>:cw) * 3 o. -:dw
-(_2*cw) ({.@] %~&.> (1,1,~[) (;-) [,~{:@]) 1(+,-)k
-)
-
-0 : 0 NB. Alternate notch filter design
-w0 =. 2p1 * ({.y)%F
-r =. 1{y,0.99
-((%:r)&* ; [: -@:|.@:}. (r^i.3)&*) 1,(_2*2 o. w0),1
+k =. 3 o. -:dw
+(_2*2 o. w0) ({.@] %~&.> (1,1,~[) (;-) [,~{:@]) 1(+,-)k
 )
 
 NB. ---------------------------------------------------------
