@@ -74,6 +74,10 @@ ab =. 1 0 2 3 0 4 { k p.~ _2 0 2 , (1,,&1)"0 ,(,.-) Q %~ 10^0>.(,~-)20%~g
 2 (}. ;&|. -@:{.) ({. %~ }.) ab
 )
 
+NB. Q to bandwidth and vice-versa
+NtoQ =: [: (%:%<:) 2&^
+QtoN =: 2 ^. [: (+ <:&.*:) 1(+%)2**:
+
 NB. ---------------------------------------------------------
 NB. Second-order shelving filter
 NB. y is (type, gain in dB, frequency, Q)
