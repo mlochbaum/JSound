@@ -109,29 +109,23 @@ NB. The polynomials here should probably be treated as black magic, but
 NB. a derivation from the constraints is included below anyway.
 get_panap_coeff =: 3 : 0
 'n rr f' =. y
-z2=.*: z =. ^j.2p1*f%F
 r =. *:rr
 pm =. +//.@:(*/)
-pa =. +/@:,:
 
-S =. (pm~  ;  (3{.(r-1)*(8%n)) pa pm&((3-r),2)) (1+r),_2
-
-H1 =. z2 (+ ;&(,&(_2*z))~ 1+*) r
-H2 =. S pa&.>/@:(pm&.>)"1 H1 ,.~ ((z2*r) - z*z+2)  ;&(,&(_2*z))  (r - 1+2*z)
-H2 =. ({.~ 1 + 0&(~:i:1:))&.> H2
-
-NB. Should be equal to H1*H2.
-RHS =. (pa&.>/,{:) (,(z+1)*(1-r)) ; (r,1)-z
+'c1 c2' =. 2*2 o. 1 2*2p1*f%F
+q =. (r-1)*2%n
+p =. (4*(1+r+q),_2)pm((r,(1+r),0)*0 6 0+c2-2*c1)+((1+*:r),0,4)*1-c1
+p =. p + (pm~((1+r),_2))pm(2+c1)*((1+r),-c1)
 
 NB. Solve.
-re =. (#~ (=+) *. rr>:|) _1{::p. -&>/ pm&.>/"1 H1 ,. H2 ,. |.RHS
+re =. (#~ (=+) *. rr>:|) _1{::p. p
 ('No solutions!') assert 1<:#re
 re =. >./ 9 o. re
-getz =. ] j. -&.*:
-a =. rr getz re=.{.re
+getz =. ] j. (%:@-*:)
+a =. r getz re
 
-Sv =. S p.&>(%/@:) re
-b =. (%: r + Sv*r-1) getz (re + Sv*re+1)
+Sv =. (*~  %  (4*q) + *&((3-r)+2*re)) 1+r-2*re
+b =. (r + Sv*r-1) getz (re + Sv*re+1)
 
 a,b
 )
@@ -233,4 +227,7 @@ NB. polynomial in re1 and rs1.
 a = 2*z*re1,  r = rs1
 H1 = ((1 + (z2*r) - a)                             )  %  ((z2 + r - a)                        )
 H2 = ((1 + (z2*r) - a) + S*(((z2*r) - a) - (z*z+2)))  %  ((z2 + r - a) + S*((r - a) - (1+2*z)))
+
+NB. Further simplifications to reduce to a real cubic were made for
+NB. BQNoise. See that repository for the complete derivation.
 )
